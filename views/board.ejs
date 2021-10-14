@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <title>Board</title>
+  <!-- Favicon-->
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <!-- Font Awesome icons (free version)-->
+  <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" crossorigin="anonymous"></script>
+  <!-- Google fonts-->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
+    type="text/css" />
+
+  <!-- Core theme CSS (includes Bootstrap)-->
+  <link href="/css/styles.css" rel="stylesheet">
+
+  <!-- Bootstrap core JS-->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Core theme JS-->
+  <script src="/js/scripts.js"></script>
+  <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+</head>
+
+<!--<body id="page-top">-->
+
+  <!--상단바-->
+  <header class="navbar navbar-light sticky-top bg-light flex-md-nowrap p-0 shadow justify-content-start">
+    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 text-dark" href="/main">WebBoard</a>
+    <button class="navbar-toggler d-md-none ms-auto collapsed" type="button" data-bs-toggle="collapse"
+    data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+    <form class="d-flex w-100" role="form" action="/search/" method="POST">
+      <select class="form-select font-weight-bold text-secondary col-md-3 col-sm-4 me-2" style="max-width:20%;"
+          name="keywordCategory">
+          <option selected value="TITLE"> 제목 </option>
+          <option value="DESCRIPTION"> 내용 </option>
+          <option value="TD"> 제목+내용 </option>
+          <option value="UID"> 작성자 </option>
+        </select>
+      <input class="form-control" type="text" placeholder="Search" aria-label="Search" name=key>
+      <input type="text" name="idx" hidden="hidden" value="<%=idx%>">
+      <div class="navbar-nav">
+        <div class="nav-item text-nowrap">
+          <button class="btn nav-link px-3 text-light bg-secondary" type="submit">Search</button>
+        </div>
+      </div>
+    </form>
+    <!--로그인 상태창 - 세션 정보에 따라 처리 - 글쓰기 버튼도 같이 처리-->
+     <!--로그인o -->
+     <%  if(session.name) {%>
+      <div class="text-nowrap ms-auto" id="loginStatus">
+        <ul class="mb-0 ps-0" style="list-style: none;">
+          <li class="nav-item mx-0 mx-lg-1 dropdown">
+            <a class="btn font-weight-bold bg-primary text-white rounded" id="logOutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"> 
+              <%= session.name %>님
+            </a>
+              <ul class="dropdown-menu dropdown-menu-end bg-secondary" aria-labelledby="logOutDropdown">
+                <li class="dropdown-item"><a class="nav-link py-3 px-0 px-lg-3 rounded" href="/user/logout">로그아웃</a></li>
+              </ul>
+          </li> 
+        </ul>
+      </div> 
+     <!--로그인x  -->
+    <%} else {%> 
+      <div class="text-nowrap d-flex ms-auto" id="loginStatus">
+        <ul class="mb-0 ps-1" style="list-style: none;">                   
+            <li class="nav-item mx-0 mx-lg-1"><a class="btn font-weight-bold bg-primary text-white rounded" href="/user/login">로그인</a></li>
+        </ul>
+        <ul class="mb-0 ps-1" style="list-style: none;">                   
+          <li class="nav-item mx-0 mx-lg-1"><a class="btn font-weight-bold bg-primary text-white rounded" href="/user/signup">회원가입</a></li>                      
+        </ul>
+      </div> 
+      <%}%>     
+  </header>
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- 게시판 보드-->
+      <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+        <div class="positon-sticky pt-3">
+          <ul class="nav flex-column">
+            <li class="dropdown-item"><a class="nav-link" href="/board/1/1"> 게시판 1 </a></li>
+            <li class="dropdown-item"><a class="nav-link" href="/board/2/1"> 게시판 2 </a></li>
+            <li class="dropdown-item"><a class="nav-link" href="/board/3/1"> 게시판 3 </a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div
+          class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <h1 class="h2"> 게시판<%=idx%> </h1>
+          <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+              <!--로그인 상태에 따른 글쓰기 버튼 -->
+              <!--로그인o -->
+              <%  if(session.name) {%>              
+                <button type="button" class="btn btn-sm btn-outline-secondary"><a href="/create/<%=idx%>"> 글쓰기</a></button>
+              <%}%> 
+              <!--로그인 x 버튼 없음--> 
+            </div>
+          </div>
+        </div>
+
+        <!--게시판 글목록 테이블-->
+        <section>
+          <table class="table table-hover">
+            <thead class="table-secondary text-white">
+              <tr>
+                <td></td>
+                <td>제목</td>
+                <td>작성자</td>
+                <td>작성일</td>
+              </tr>
+            </thead>
+            <tbody>
+              <% if(!empty) {
+                for(i= (page * num) - num; i < (page * num); i++) {
+                  if(i > len) {
+                    i++;
+                  } else {
+                    var data = list[i] %>
+                <tr>
+                  <td>
+                    <%= data.POSTNUM %>
+                  </td>
+                  <td><a href=<%=`/read/${list[i].POSTNUM}` %>>
+                    <% if(data.TITLE.length > 40) {
+                      let title = data.TITLE.substring(0,40) + " . . . . . " %>
+                      <%=title%>
+                    <% } else { %>
+                    <%= data.TITLE %>
+                    <% } %>
+                    </a></td>
+                  <td>
+                    <%= data.UID %>
+                  </td>
+                  <td>
+                    <% 	const now = new Date();
+                    const year = now.getFullYear();
+                    let month = now.getMonth() + 1;
+                    let date = now.getDate();
+                    if(month < 10) month = "0" + month;
+                    if(date < 10) date = "0" + date;
+                    const today = `${year}-${month}-${date}`;
+                    if(data.UPDTIME.substring(0, 10) == today) data.UPDTIME = data.UPDTIME.substring(11) 
+                    else data.UPDTIME = data.UPDTIME.substring(0, 10) %>
+                    <%= data.UPDTIME %>
+                  </td>
+                </tr>
+                <% } } } else { %>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                <% } %>
+            </tbody>
+          </table>
+          <br />
+
+          <!--글목록 페이지 넘기기 아이콘-->
+          <nav aria-label="Page navigation">
+            <ul class="pagination d-felx justify-content-center">
+              <li class="page-item">
+                <a class="page-link" href="#" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              <% for(j = 0; j < (len+1) / num; j++) { %>
+              <li class="page-item"><a class="page-link" href="/board/<%=idx%>/<%=j+1%>"><%=j+1%></a></li>
+              <% } %>
+              <!--<li class="page-item"><a class="page-link" href="#">2</a></li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>-->
+              <li class="page-item">
+                <a class="page-link" href="#" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </section>
+      </main>
+    </div>
+
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>edit</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v5.15.3/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
+        type="text/css" />
+
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="/css/styles.css" rel="stylesheet">
+
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="/js/scripts.js"></script>
+    <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+
+    <!--summernote를 위한 jQuery, css, js, summernote import-->
+    <!--<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>-->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+</head>
+
+<body>
+    <!--상단바-->
+    <header class="navbar navbar-light sticky-top bg-light flex-md-nowrap p-0 shadow justify-content-start">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 text-dark" href="/main">WebBoard</a>
+        <button class="navbar-toggler d-md-none ms-auto collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <form class="d-flex w-100" role="form" accept="/search" method="POST">
+            <select class="form-select font-weight-bold text-secondary col-md-3 col-sm-4 me-2" style="max-width:20%;"
+              name="keywordCategory">
+                <option selected value="TITLE"> 제목 </option>
+                <option value="DESCRIPTION"> 내용 </option>
+                <option value="TD"> 제목+내용 </option>
+                <option value="UID"> 작성자 </option>
+            </select>
+            <input class="form-control" type="text" placeholder="Search" aria-label="Search">
+            <div class="navbar-nav">
+                <div class="nav-item text-nowrap">
+                    <button class="btn nav-link px-3  text-light bg-secondary" type="submit">Search</a>
+                </div>
+            </div>
+        </form>
+        <!--로그인 상태창 - 세션 정보에 따라 처리 -->
+        <!--로그인o -->
+        <% if(session.name) {%>
+            <div class="text-nowrap ms-auto" id="loginStatus">
+                <ul class="mb-0 ps-0" style="list-style: none;">
+                    <li class="nav-item mx-0 mx-lg-1 dropdown">
+                        <a class="btn font-weight-bold bg-primary text-white rounded" id="logOutDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <%= session.name %>님
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end bg-secondary" aria-labelledby="logOutDropdown">
+                            <li class="dropdown-item"><a class="nav-link py-3 px-0 px-lg-3 rounded"
+                                    href="/user/logout">로그아웃</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <%}%>
+                <!--로그인x - 무조건 로그인 했을 때만 글쓰기를 할 수 있기 때문에 없음
+                <div class="d-flex justify-content-end col-lg-2 " id="loginStatus">
+                  <ul class="mb-0" style="list-style: none;">                   
+                      <li class="nav-item mx-0 mx-lg-1"><a class="btn font-weight-bold bg-primary text-white rounded" href="/login">로그인</a></li>
+                  </ul>
+                </div>  -->
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- 게시판 보드-->
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+                <div class="positon-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="dropdown-item"><a class="nav-link" href="/board/1/1"> 게시판 1 </a></li>
+                        <li class="dropdown-item"><a class="nav-link" href="/board/2/1"> 게시판 2 </a></li>
+                        <li class="dropdown-item"><a class="nav-link" href="/board/3/1"> 게시판 3 </a></li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"> 게시판<%=idx%> 글쓰기 </h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <!--Create-->
+                            <% if(!update) { %>
+                                <form action=<%=`/create/${idx}`%> method="POST">
+                                    <input type="text" name="idx" hidden="hidden" value="<%=idx%>">
+                                    <input type="hidden" name="update" value="0">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">등록</button>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!--게시판 선택-->
+                <!--<section>
+                    <select class="form-select text-uppercase font-weight-bold text-secondary mb-2 " name="category" id="chooseBoardSection">
+                        <option selected>게시판을 선택해 주세요</option>
+                        <option > 게시판1 </option>
+                        <option > 게시판2 </option>
+                        <option > 게시판3 </option>
+                    </select>
+                </section>-->
+
+                <!--제목 입력-->
+                <section>
+                    <input class="form-control font-weight-bold text-secondary mb-2" name="title"
+                        type="text" placeholder="제목을 입력해 주세요.">
+                </section>
+
+                <!--summernote 호출-->
+                <section>
+                    <div>
+                        <textarea class="summernote" name="description" id="summernote"></textarea>
+                    </div>
+                    </form>
+
+                    <!-- <div class="border d-inline-flex p-2 text-muted" style="width: 250px;">
+                            <i class="far fa-folder my-auto"></i>
+                            <small class=" my-auto ms-3">${uploadedFile}</small>
+                      </div>  -->
+
+                    <!--summernote file upload button custom-->
+                    <!-- Modal -->
+                    <div class="modal"  tabindex="-1" aria-labelledby="exampleModalLabel" id="InsertFiles" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header"> 
+                                    <h4 class="modal-title" id="exampleModalLabel">Insert Files</h4> 
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" >
+                                    </button>                
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group note-form-group note-group-select form-files">
+                                        <form class="clearfix" enctype="multipart/form-data" method="POST" id="fileupload">
+                                            <label for="attach" class="note-form-label">Select from files</label>
+                                            <input id="attach" class="form-control-file note-form-control note-input float-start" type="file" name="attach"  multiple>      
+                                            <button class="btn btn-primary float-end disabled mt-3" id="btnUpload">파일 첨부</button>
+                                        </form>                           
+                                    </div>             
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>                     
+                        var fileUploadButton = function (context) {
+                            var ui = $.summernote.ui;
+
+                            var button = ui.button({
+                                contents: '<i class="fas fa-folder-plus"></i>',
+                                tooltip: 'Files',
+                                container: 'body',
+                                click: function() {
+                                    console.log('file upload open');
+                                    $('#InsertFiles').modal('show');                                                                         
+                                }
+                            }); 
+                            return button.render();
+                        };                         
+                        
+                        $('#attach').on('change', function() {
+                            if($('#attach')[0].value !== ''){
+                                $('#btnUpload')[0].classList.remove("disabled");
+                            }  
+                            else {
+                                $('#btnUpload')[0].classList.add("disabled");
+                            }                        
+                        })
+                    </script>
+
+                    <script>
+                        $('#btnUpload').on('click', function(event) {
+                            event.preventDefault();
+
+                            let form = $('#fileupload')[0];
+                            let data = new FormData(form);
+
+                            $('#btnUpload').prop('disabled', true);
+
+                            $.ajax({
+                                enctype: 'multipart/form-data',
+                                url: '/upload/files',
+                                processData: false,
+                                contentType: false,
+                                cache: false,
+                                data: data,
+                                type: 'POST',
+                                success: function(data) {
+                                    $('#btnUpload').prop('disabled', false);
+                                    console.log('success');
+
+                                    //hide modal
+                                    $('#InsertFiles').modal('hide');
+
+                                    //display uploade file in summernote
+                                    for(i = 0; i < $('#attach')[0].files.length; i++){
+                                        var uploadedFileName = $('#attach')[0].files[i].name;
+                                        var htmlString = `
+                                        <div class="border d-inline-flex p-2 text-muted" style="width: 250px;">
+                                                <i class="far fa-folder my-auto"></i>
+                                                <small class=" my-auto ms-3">${uploadedFileName}</small>
+                                        </div>
+                                        <br>
+                                        `;
+                                        $('#summernote').summernote('pasteHTML', htmlString); 
+                                    }
+                                },
+                                error: function(e) {
+                                    $('#btnUpload').prop('disabled', false);
+                                    console.log('fail');
+                                }
+                            });
+
+                            
+                            
+                            
+                        })
+                    </script>
+
+                    <script>
+                        $(document).ready(function () {
+                            $('#summernote').summernote({
+                                width: window,
+                                height: 300,
+                                minHeight: null,
+                                maxHeight: null,
+                                focus: true,
+                                toolbar: [
+                                    ['style', ['style']],
+                                    ['font', ['bold', 'underline', 'clear']],
+                                    ['color', ['color']],
+                                    ['para', ['ul', 'ol', 'paragraph']],
+                                    ['table', ['table']],
+                                    ['insert', ['link', 'picture', 'video', 'file']],
+                                    ['view', ['codeview', 'help']]
+                                ],
+                                buttons: {
+                                    file: fileUploadButton
+                                },
+                                callbacks: {
+                                    onImageUpload: function (files) {
+                                        for (var i = files.length - 1; i >= 0; i--) {
+                                            sendimage(files[i], this)
+                                        }
+                                    }
+                                }
+                            })
+                        })
+                        function sendimage(file, editor) {
+                            var data = new FormData();
+                            data.append('file', file);
+                            $.ajax({
+                                data: data,
+                                type: "POST",
+                                url: '/upload/images',
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                enctype: "multipart/form-data",
+                                success: function (response) {
+                                    $('#summernote').summernote('insertImage', response.url);
+                                }
+                            })
+                        }
+                    </script>                                       
+                </section>
+                <% } else { %>
+
+                    <form action=<%=`/create/${idx}`%> method="POST">
+                        <input type="text" name="idx" hidden="hidden" value="<%=idx%>">
+                        <input type="hidden" name="update" value="1">
+                        <input type="hidden" name="postnum" value="<%=content.POSTNUM%>">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">등록</button>
+
+        </div>
+    </div>
+    </div>
+    <!--Update-->
+    <section>
+        <input class="form-control font-weight-bold text-secondary mb-2" name="title" type="text"
+            placeholder="제목을 입력해 주세요." value="<%=content.TITLE%>">
+    </section>
+
+    <!--summernote 호출-->
+    <section>
+        <div>
+            <textarea class="form-control" name="description" id="summernote"><%-content.DESCRIPTION%></textarea>
+        </div>
+        </form>
+        <script>
+            $(document).ready(function () {
+                $('#summernote').summernote({
+                    height: 300,
+                    minHeight: null,
+                    maxHeight: null,
+                    focus: true,
+                    toolbar: [
+                        ['style', ['style']],
+                        ['font', ['bold', 'underline', 'clear']],
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['table', ['table']],
+                        ['insert', ['link', 'picture', 'video', 'file']],
+                        ['view', ['codeview', 'help']]
+                    ],
+                    callbacks: {
+                        onImageUpload: function (files) {
+                            for (var i = files.length - 1; i >= 0; i--) {
+                                sendFile(files[i], this)
+                            }
+                        }
+                    }
+                })
+            })
+            function sendFile(file, editor) {
+                var data = new FormData();
+                data.append('file', file);
+                console.log("sendfile in")
+                $.ajax({
+                    data: data,
+                    type: "POST",
+                    url: '/upload/images',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    enctype: "multipart/form-data",
+                    success: function (response) {
+                        console.log(response.url)
+                        $('#summernote').summernote('insertImage', response.url);
+                    }
+                })
+            }
+        </script>
+        <!--<div class="summernote" name="description"></div>-->
+    </section>
+    <% } %>
+        </main>
+        </div>
+        </div>
+</body>
+
+</html>
